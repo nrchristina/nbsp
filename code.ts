@@ -12,6 +12,10 @@ function replaceSpaces(text: string): { result: string; count: number } {
   let count = 0;
   let regexp: RegExp;
   
+  // Схлопываем множественные пробелы (обычные и неразрывные) в один обычный пробел
+  // Это нужно делать перед применением правил типографики
+  result = result.replace(/[\u0020\u00A0]{2,}/g, ' ');
+  
   // Неразрывные пробелы между словом и и т.д. и т.п. и др.
   result = result.replace(/(.)\u0020+(и)\u0020+(т\.д\.|т\.п\.|др\.)/g, function (match, p1, p2, p3) {
     count++;
