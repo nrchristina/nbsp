@@ -9,66 +9,113 @@
     }
     
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      padding: 16px;
-      padding-bottom: 32px;
-      background: #ffffff;
-      position: relative;
-    }
-    
-    h1 {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 16px;
-      color: #000000;
-    }
-    
-    .section {
-      margin-bottom: 20px;
-    }
-    
-    label {
-      display: block;
-      font-size: 12px;
-      font-weight: 500;
-      margin-bottom: 8px;
-      color: #333333;
-    }
-    
-    select {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #e5e5e5;
-      border-radius: 4px;
-      font-size: 12px;
-      background: #ffffff;
-      cursor: pointer;
-    }
-    
-    select:focus {
-      outline: none;
-      border-color: #18a0fb;
-    }
-    
-    button {
-      width: 100%;
-      padding: 10px;
-      background: #18a0fb;
+      font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #2c2c2c;
       color: #ffffff;
-      border: none;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: 500;
+      padding: 12px 20px 20px 20px;
+      position: relative;
+      min-height: 100vh;
+    }
+    
+    .startPage {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+    }
+    
+    .content {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+    
+    .title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.07px;
+      line-height: normal;
+    }
+    
+    .selectionControls {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+    }
+    
+    .selectionControl {
+      flex: 1;
+      background: #383838;
+      border: 2px solid transparent;
+      border-radius: 12px;
+      padding: 16px 6px;
+      height: 76px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
-      margin-top: 8px;
+      transition: all 0.2s;
     }
     
-    button:hover {
-      background: #1592e6;
+    .selectionControl:hover {
+      background: #404040;
     }
     
-    button:disabled {
-      background: #cccccc;
+    .selectionControl.active {
+      border-color: #bbfe01;
+    }
+    
+    .icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .icon svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    
+    .selectionControlLabel {
+      font-size: 12px;
+      font-weight: 400;
+      color: #ffffff;
+      text-align: center;
+      line-height: normal;
+      white-space: pre-wrap;
+    }
+    
+    .changeButton {
+      width: 100%;
+      height: 44px;
+      background: #bbfe01;
+      color: #2c2c2c;
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.07px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    
+    .changeButton:hover {
+      background: #a8e600;
+    }
+    
+    .changeButton:disabled {
+      background: #666666;
+      color: #999999;
       cursor: not-allowed;
     }
     
@@ -94,41 +141,68 @@
       display: block;
     }
     
-    .version {
-      position: absolute;
-      bottom: 8px;
-      right: 12px;
-      font-size: 10px;
-      color: #999999;
-      font-weight: 400;
-    }
   </style>
 </head>
 <body>
-  <h1>&nbsp;</h1>
-  
-  <div class="section">
-    <label for="scope">Select scope:</label>
-    <select id="scope">
-      <option value="selection">Selected frame/element</option>
-      <option value="page">Current page</option>
-      <option value="file">Entire file</option>
-    </select>
+  <div class="startPage">
+    <div class="content">
+      <p class="title">Where to change</p>
+      <div class="selectionControls">
+        <div class="selectionControl active" data-scope="selection" id="control-selection">
+          <div class="icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M16 4.25C16.4142 4.25 16.75 4.58579 16.75 5V7.25H19C19.4142 7.25 19.75 7.58579 19.75 8C19.75 8.41421 19.4142 8.75 19 8.75H16.75V15.25H19C19.4142 15.25 19.75 15.5858 19.75 16C19.75 16.4142 19.4142 16.75 19 16.75H16.75V19C16.75 19.4142 16.4142 19.75 16 19.75C15.5858 19.75 15.25 19.4142 15.25 19V16.75H8.75V19C8.75 19.4142 8.41421 19.75 8 19.75C7.58579 19.75 7.25 19.4142 7.25 19V16.75H5C4.58579 16.75 4.25 16.4142 4.25 16C4.25 15.5858 4.58579 15.25 5 15.25H7.25V8.75H5C4.58579 8.75 4.25 8.41421 4.25 8C4.25 7.58579 4.58579 7.25 5 7.25H7.25V5C7.25 4.58579 7.58579 4.25 8 4.25C8.41421 4.25 8.75 4.58579 8.75 5V7.25H15.25V5C15.25 4.58579 15.5858 4.25 16 4.25ZM8.75 15.25H15.25V8.75H8.75V15.25Z" fill="white"/>
+            </svg>
+          </div>
+          <div class="selectionControlLabel">this frame</div>
+        </div>
+        <div class="selectionControl" data-scope="page" id="control-page">
+          <div class="icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M15.5 15.75C15.9142 15.75 16.25 16.0858 16.25 16.5C16.25 16.9142 15.9142 17.25 15.5 17.25H9C8.58579 17.25 8.25 16.9142 8.25 16.5C8.25 16.0858 8.58579 15.75 9 15.75H15.5Z" fill="white"/>
+              <path d="M12.5 11.75C12.9142 11.75 13.25 12.0858 13.25 12.5C13.25 12.9142 12.9142 13.25 12.5 13.25H9C8.58579 13.25 8.25 12.9142 8.25 12.5C8.25 12.0858 8.58579 11.75 9 11.75H12.5Z" fill="white"/>
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M12.1719 2.25C12.9011 2.25007 13.6005 2.54002 14.1162 3.05566L19.4443 8.38379C19.96 8.89946 20.2499 9.5989 20.25 10.3281V18.5C20.25 20.0188 19.0188 21.25 17.5 21.25H7C5.48122 21.25 4.25 20.0188 4.25 18.5V5C4.25 3.48122 5.48122 2.25 7 2.25H12.1719ZM7 3.75C6.30964 3.75 5.75 4.30964 5.75 5V18.5C5.75 19.1904 6.30964 19.75 7 19.75H17.5C18.1904 19.75 18.75 19.1904 18.75 18.5V10.3281C18.75 10.302 18.7477 10.276 18.7461 10.25H15C13.4812 10.25 12.25 9.01878 12.25 7.5V3.75293C12.2241 3.7513 12.198 3.75001 12.1719 3.75H7ZM13.75 7.5C13.75 8.19036 14.3096 8.75 15 8.75H17.6895L13.75 4.81055V7.5Z" fill="white"/>
+            </svg>
+          </div>
+          <div class="selectionControlLabel">this page</div>
+        </div>
+        <div class="selectionControl" data-scope="file" id="control-file">
+          <div class="icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M14.4216 2C14.6063 2.00002 14.7891 2.01852 14.9675 2.05469C15.0546 2.0193 15.1499 2 15.2497 2C15.5604 2 15.8273 2.18878 15.9411 2.45801C16.0929 2.55865 16.2352 2.675 16.3659 2.80566L20.194 6.63379C20.3244 6.76414 20.4402 6.90627 20.5407 7.05762C20.8106 7.17118 20.9997 7.43886 20.9997 7.75C20.9997 7.84961 20.9793 7.94429 20.944 8.03125C20.9803 8.20999 20.9997 8.39303 20.9997 8.57812V16.25C20.9997 17.7688 19.7685 19 18.2497 19H17.9997V19.25C17.9997 20.7688 16.7685 22 15.2497 22H6.74969C5.23092 22 3.99969 20.7688 3.99969 19.25V7.75C3.99969 6.23122 5.23091 5 6.74969 5H6.99969V4.75C6.99969 3.23122 8.23091 2 9.74969 2H14.4216ZM6.74969 6.5C6.05934 6.5 5.49969 7.05964 5.49969 7.75V19.25C5.49969 19.9404 6.05933 20.5 6.74969 20.5H15.2497C15.9401 20.5 16.4997 19.9404 16.4997 19.25V19H9.74969C8.23092 19 6.99969 17.7688 6.99969 16.25V6.5H6.74969ZM9.74969 3.5C9.05934 3.5 8.49969 4.05964 8.49969 4.75V16.25C8.49969 16.9404 9.05933 17.5 9.74969 17.5H18.2497C18.9401 17.5 19.4997 16.9404 19.4997 16.25V8.57812C19.4997 8.55196 19.4974 8.52597 19.4958 8.5H17.2497C15.7309 8.5 14.4997 7.26878 14.4997 5.75V3.50293C14.4737 3.5013 14.4477 3.50001 14.4216 3.5H9.74969ZM15.9997 5.75C15.9997 6.44036 16.5593 7 17.2497 7H18.4391L15.9997 4.56055V5.75Z" fill="white"/>
+            </svg>
+          </div>
+          <div class="selectionControlLabel">all pages</div>
+        </div>
+      </div>
+    </div>
+    
+    <button class="changeButton" id="processBtn">Change</button>
+    
+    <div id="message" class="message"></div>
   </div>
   
-  <button id="processBtn">Process Text</button>
-  
-  <div id="message" class="message"></div>
-  
-  <div class="version">version 3.0</div>
-  
   <script>
-    const scopeSelect = document.getElementById('scope');
+    let selectedScope = 'selection';
     const processBtn = document.getElementById('processBtn');
     const messageDiv = document.getElementById('message');
+    const controls = document.querySelectorAll('.selectionControl');
     
+    // Handle selection controls
+    controls.forEach(control => {
+      control.addEventListener('click', () => {
+        // Remove active class from all controls
+        controls.forEach(c => c.classList.remove('active'));
+        // Add active class to clicked control
+        control.classList.add('active');
+        // Update selected scope
+        selectedScope = control.dataset.scope;
+      });
+    });
+    
+    // Handle change button click
     processBtn.addEventListener('click', () => {
-      const scope = scopeSelect.value;
+      const scope = selectedScope;
       processBtn.disabled = true;
       processBtn.textContent = 'Processing...';
       messageDiv.className = 'message';
@@ -136,12 +210,13 @@
       parent.postMessage({ pluginMessage: { type: 'process', scope } }, '*');
     });
     
+    // Handle messages from plugin
     window.onmessage = (event) => {
       const msg = event.data.pluginMessage;
       
       if (msg.type === 'result') {
         processBtn.disabled = false;
-        processBtn.textContent = 'Process Text';
+        processBtn.textContent = 'Change';
         
         if (msg.success) {
           messageDiv.className = 'message success';
