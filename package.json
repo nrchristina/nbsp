@@ -1,6 +1,6 @@
 {
-  "name": "russian-nbsp-plugin",
-  "version": "3.0.0",
+  "name": "nbsp",
+  "version": "1.0.0",
   "description": "Figma plugin to replace regular spaces with non-breaking spaces in Russian text",
   "scripts": {
     "build": "tsc",
