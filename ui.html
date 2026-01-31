@@ -11,7 +11,9 @@
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       padding: 16px;
+      padding-bottom: 32px;
       background: #ffffff;
+      position: relative;
     }
     
     h1 {
@@ -91,6 +93,15 @@
       border: 1px solid #f44336;
       display: block;
     }
+    
+    .version {
+      position: absolute;
+      bottom: 8px;
+      right: 12px;
+      font-size: 10px;
+      color: #999999;
+      font-weight: 400;
+    }
   </style>
 </head>
 <body>
@@ -108,6 +119,8 @@
   <button id="processBtn">Process Text</button>
   
   <div id="message" class="message"></div>
+  
+  <div class="version">version 2.19</div>
   
   <script>
     const scopeSelect = document.getElementById('scope');

@@ -3,124 +3,90 @@
 
 const NON_BREAKING_SPACE = '\u00A0';
 
-// Russian typography rules for non-breaking spaces
-function shouldReplaceSpace(text: string, index: number): boolean {
-  const charBefore = index > 0 ? text[index - 1] : '';
-  const charAfter = index < text.length - 1 ? text[index + 1] : '';
-  
-  // Single-letter prepositions: в, к, с, о, у, из, от, до, на, по, за, про, со, во, об, обо
-  const singleLetterPrepositions = ['в', 'к', 'с', 'о', 'у'];
-  const twoLetterPrepositions = ['из', 'от', 'до', 'на', 'по', 'за', 'со', 'во', 'об'];
-  const threeLetterPrepositions = ['про', 'обо'];
-  
-  // Single-letter conjunctions: и, а, но
-  const singleLetterConjunctions = ['и', 'а'];
-  const twoLetterConjunctions = ['но'];
-  
-  // Check if space is after a single-letter preposition
-  if (singleLetterPrepositions.includes(charBefore.toLowerCase())) {
-    return true;
-  }
-  
-  // Check if space is after a two-letter preposition
-  if (index >= 2) {
-    const twoChars = text.substring(index - 2, index).toLowerCase();
-    if (twoLetterPrepositions.includes(twoChars)) {
-      return true;
-    }
-  }
-  
-  // Check if space is after a three-letter preposition
-  if (index >= 3) {
-    const threeChars = text.substring(index - 3, index).toLowerCase();
-    if (threeLetterPrepositions.includes(threeChars)) {
-      return true;
-    }
-  }
-  
-  // Check if space is after a single-letter conjunction
-  if (singleLetterConjunctions.includes(charBefore.toLowerCase())) {
-    return true;
-  }
-  
-  // Check if space is after a two-letter conjunction
-  if (index >= 2) {
-    const twoChars = text.substring(index - 2, index).toLowerCase();
-    if (twoLetterConjunctions.includes(twoChars)) {
-      return true;
-    }
-  }
-  
-  // Check for initials (single letter followed by period, then space)
-  if (index >= 2 && /[А-ЯЁ]\./.test(text.substring(index - 2, index))) {
-    return true;
-  }
-  
-  // Check for numbers followed by units (e.g., "12 кг", "5 м")
-  if (/[0-9]/.test(charBefore)) {
-    const units = ['кг', 'г', 'м', 'см', 'мм', 'км', 'л', 'мл', 'т', 'ц', 'руб', 'коп', '₽', '$', '€', '°', '%', 'px', 'pt', 'em', 'rem'];
-    const textAfter = text.substring(index + 1).toLowerCase();
-    for (const unit of units) {
-      if (textAfter.startsWith(unit.toLowerCase())) {
-        return true;
-      }
-    }
-  }
-  
-  // Check for abbreviations: и т. д., и т. п., и др., и пр.
-  if (index >= 4) {
-    const beforeText = text.substring(index - 4, index).toLowerCase();
-    if (beforeText === 'т. д' || beforeText === 'т. п') {
-      return true;
-    }
-  }
-  if (index >= 3) {
-    const beforeText = text.substring(index - 3, index).toLowerCase();
-    if (beforeText === ' др' || beforeText === ' пр') {
-      return true;
-    }
-  }
-  
-  // Check for dash after space (e.g., "Восемнадцать — это")
-  if (charAfter === '—' || charAfter === '–' || charAfter === '-') {
-    return true;
-  }
-  
-  // Check for short words: что, как, так, то, же, ли, бы, б, ж, ль, ведь, мол, де
-  const shortWords = ['что', 'как', 'так', 'то', 'же', 'ли', 'бы', 'б', 'ж', 'ль', 'ведь', 'мол', 'де'];
-  if (index >= 4) {
-    const fourChars = text.substring(index - 4, index).toLowerCase();
-    if (shortWords.includes(fourChars)) {
-      return true;
-    }
-  }
-  if (index >= 3) {
-    const threeChars = text.substring(index - 3, index).toLowerCase();
-    if (shortWords.includes(threeChars)) {
-      return true;
-    }
-  }
-  if (index >= 2) {
-    const twoChars = text.substring(index - 2, index).toLowerCase();
-    if (shortWords.includes(twoChars)) {
-      return true;
-    }
-  }
-  
-  return false;
-}
+// Словари для неразрывных пробелов (из SBOL Typograph)
+const nbspBefore = "б|бы|ж|же|ли|ль";
+const nbspAfter = "а|б|без|безо|будто|бы|в|во|ведь|вне|вот|всё|где|да|даже|для|до|если|есть|ещё|же|за|и|из|изо|из-за|из-под|или|иль|к|ко|как|ли|ли|либо|между|на|над|надо|не|ни|но|о|об|обо|около|оно|от|ото|перед|по|по-за|по-над|под|подо|после|при|про|ради|с|со|сквозь|так|также|там|тем|то|тогда|того|тоже|у|хоть|хотя|чего|через|что|чтобы|это|этот|этого|№|§|АО|ОАО|ЗАО|ООО|ПАО|стр\\.|гл\\.|рис\\.|илл\\.|ст\\.|п\\.|c\\.";
 
 function replaceSpaces(text: string): { result: string; count: number } {
-  let result = '';
+  let result = text;
   let count = 0;
+  let regexp: RegExp;
   
-  for (let i = 0; i < text.length; i++) {
-    if (text[i] === ' ' && shouldReplaceSpace(text, i)) {
-      result += NON_BREAKING_SPACE;
+  // Неразрывные пробелы между словом и и т.д. и т.п. и др.
+  result = result.replace(/(.)\u0020+(и)\u0020+(т\.д\.|т\.п\.|др\.)/g, function (match, p1, p2, p3) {
+    count++;
+    return p1 + NON_BREAKING_SPACE + p2 + NON_BREAKING_SPACE + p3;
+  });
+
+  // Неразрывный пробел ПЕРЕД б, бы, ж, же, ли, ль
+  regexp = new RegExp("\\u0020(" + nbspBefore + ")([^А-ЯЁа-яё])", "gim");
+  result = result.replace(regexp, function (match, p1, p2) {
+    count++;
+    return NON_BREAKING_SPACE + p1 + p2;
+  });
+
+  // Неразрывный пробел ПОСЛЕ слов из словаря
+  regexp = new RegExp('(^|[\\u0020\\u00A0\\«\\„\\"\\(\\[])(' + nbspAfter + ")\\u0020", "gim");
+  result = result.replace(regexp, function (match, p1, p2) {
+    count++;
+    return p1 + p2 + NON_BREAKING_SPACE;
+  });
+
+  // Неразрывный пробел ПОСЛЕ №, если пробела нет №123
+  result = result.replace(/№([^\s])/gm, function (match, p1) {
+    count++;
+    return "№" + NON_BREAKING_SPACE + p1;
+  });
+
+  // Неразрывный пробел между числом и следующим словом
+  result = result.replace(/(\d)\u0020+([a-zA-zа-яёА-ЯЁ])/gi, function (match, p1, p2) {
+    count++;
+    return p1 + NON_BREAKING_SPACE + p2;
+  });
+
+  // Неразрывный пробел ПОСЛЕ сокращений: город, область, край, станция, поселок, село, деревня, улица, переулок, проезд, проспект, бульвар, площадь, набережная, шоссе, тупик, офис, комната, участок, владение, строение, корпус, дом, квартира, микрорайон или ПОСЛЕ дом или литер
+  result = result.replace(
+    /(^|[\u0020\u00A0])((?:(?:г|обл|кр|ст|пос|с|д|ул|пер|пр|пр-т|просп|пл|бул|б-р|наб|ш|туп|оф|кв|комн?|под|мкр|уч|вл|влад|стр|корп?|эт|пгт)\.)|(?:дом|литера?))\u0020?(\-?[А-ЯЁ\d])/gm,
+    function (match, p1, p2, p3) {
       count++;
-    } else {
-      result += text[i];
+      return p1 + p2 + "." + NON_BREAKING_SPACE + p3;
     }
+  );
+
+  // Неразрывный пробел ПОСЛЕ короткого слова (1-3 буквы)
+  // Это ключевое правило для предотвращения висячих предлогов и союзов
+  result = result.replace(/(^|[\u0020\u00A0\«\„\"\(\[])([А-ЯЁа-яё]{1,3})\u0020/gim, function (match, p1, p2) {
+    count++;
+    return p1 + p2 + NON_BREAKING_SPACE;
+  });
+
+  // Неразрывный пробел ПЕРЕД последним коротким словом в предложении или одиночной строке
+  // Это предотвращает одиночные короткие слова в конце строки
+  result = result.replace(/\u0020([А-ЯЁа-яё]{1,3}[\"\»]?[\)\]]?[\.\!\?\…]\‥?)/gim, function (match, p1) {
+    count++;
+    return NON_BREAKING_SPACE + p1;
+  });
+
+  // Неразрывный пробел перед тире (длинное, среднее или дефис)
+  result = result.replace(/\u0020([—–\-])/g, function (match, p1) {
+    count++;
+    return NON_BREAKING_SPACE + p1;
+  });
+
+  // Неразрывный пробел после тире в начале предложения
+  result = result.replace(/(^|[\u0020\u00A0])([—–])\u0020/g, function (match, p1, p2) {
+    count++;
+    return p1 + p2 + NON_BREAKING_SPACE;
+  });
+
+  // Неразрывный пробел между числом и единицами измерения
+  const units = ['кг', 'г', 'м', 'см', 'мм', 'км', 'л', 'мл', 'т', 'ц', 'руб', 'коп', '₽', '$', '€', '°', '%', 'px', 'pt', 'em', 'rem'];
+  for (const unit of units) {
+    const unitRegex = new RegExp(`(\\d)\\u0020+(${unit.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    result = result.replace(unitRegex, function (match, p1, p2) {
+      count++;
+      return p1 + NON_BREAKING_SPACE + p2;
+    });
   }
   
   return { result, count };
@@ -164,7 +130,7 @@ function collectTextNodes(scope: 'selection' | 'page' | 'file'): TextNode[] {
   return nodes;
 }
 
-function processText(scope: 'selection' | 'page' | 'file'): { success: boolean; count: number; error?: string } {
+async function processText(scope: 'selection' | 'page' | 'file'): Promise<{ success: boolean; count: number; error?: string }> {
   let totalCount = 0;
   
   try {
@@ -179,10 +145,10 @@ function processText(scope: 'selection' | 'page' | 'file'): { success: boolean; 
       const { result, count } = replaceSpaces(originalText);
       
       if (count > 0) {
-        // Load font before setting text
-        figma.loadFontAsync(node.fontName as FontName).then(() => {
-          node.characters = result;
-        });
+        // Load font before setting text - важно дождаться загрузки
+        await figma.loadFontAsync(node.fontName as FontName);
+        // Устанавливаем текст после загрузки шрифта
+        node.characters = result;
         
         totalCount += count;
       }
@@ -200,7 +166,7 @@ figma.showUI(__html__, { width: 400, height: 400 });
 // Handle messages from UI
 figma.ui.onmessage = async (msg) => {
   if (msg.type === 'process') {
-    const result = processText(msg.scope);
+    const result = await processText(msg.scope);
     figma.ui.postMessage({
       type: 'result',
       success: result.success,
