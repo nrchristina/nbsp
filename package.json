@@ -1,0 +1,13 @@
+{
+  "name": "russian-nbsp-plugin",
+  "version": "1.0.0",
+  "description": "Figma plugin to replace regular spaces with non-breaking spaces in Russian text",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch"
+  },
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.0.0",
+    "typescript": "^5.0.0"
+  }
+}
